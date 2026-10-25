@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bunker Social — prototipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f2;--card:#fff;--ink:#1c1b19;--muted:#77736b;--line:#e8e5df;
+  --accent:#f26b1d;--accent-soft:#fdeee4;--ok:#1f9d63;--ok-soft:#e5f5ed;--warn:#c9871a;--warn-soft:#fbf2df;
+  --fb:#1877f2;--ig:#d62976;--wa:#25d366;
+  --r:14px;--ease:cubic-bezier(.23,1,.32,1);--drawer:cubic-bezier(.32,.72,0,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:14px}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+/* sidebar */
+.side{border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:6px;background:#fbfaf8}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;padding:4px 8px 18px}
+.logo{width:28px;height:28px;border-radius:8px;background:var(--ink);color:var(--accent);display:grid;place-items:center;font-weight:800}
+.nav{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:var(--muted);font-weight:500;transition:background .15s ease,color .15s ease}
+.nav.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.05)}
+@media (hover:hover){.nav:hover{color:var(--ink)}}
+.nav .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:11px;border-radius:99px;padding:1px 7px}
+.sidelabel{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:18px 10px 6px}
+.client{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;font-weight:500}
+.client.on{background:var(--accent-soft)}
+.dot{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700}
+/* main */
+main{padding:24px 32px;overflow:hidden}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+h1{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.sub{color:var(--muted);margin-top:2px}
+.sp{flex:1}
+.btn{padding:10px 16px;border-radius:11px;font-weight:600;transition:transform .16s var(--ease),background .15s ease}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--ink);color:#fff}
+.btn.sec{background:var(--card);border:1px solid var(--line)}
+.btn.acc{background:var(--accent);color:#fff}
+.view{display:none}.view.on{display:block;animation:in .28s var(--ease)}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+/* today cards */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.stat b{font-size:24px;display:block;letter-spacing:-.02em}
+.stat span{color:var(--muted);font-size:13px}
+.sec-title{font-weight:600;margin:6px 0 10px;display:flex;align-items:center;gap:8px}
+.list{display:flex;flex-direction:column;gap:8px}
+.row{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:14px;transition:transform .2s var(--ease),opacity .2s ease}
+.thumb{width:52px;height:52px;border-radius:10px;flex:none;background-size:cover;background-position:center}
+.row .t{font-weight:600}.row .m{color:var(--muted);font-size:13px;margin-top:2px}
+.chip{font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}.chip.wait{background:var(--warn-soft);color:var(--warn)}.chip.sched{background:#eef2fb;color:#3b5bb5}
+.net{display:inline-flex;gap:4px}
+.n{width:18px;height:18px;border-radius:5px;color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center}
+.n.fb{background:var(--fb)}.n.ig{background:var(--ig)}
+.row .acts{display:flex;gap:6px;margin-left:auto}
+.mini{padding:7px 12px;border-radius:9px;font-weight:600;font-size:13px;transition:transform .16s var(--ease)}
+.mini:active{transform:scale(.96)}
+.mini.yes{background:var(--ok);color:#fff}.mini.no{background:var(--bg)}
+.row.gone{opacity:0;transform:translateX(24px)}
+/* calendar */
+.weekbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{padding:6px 12px;border-radius:8px;font-weight:500;color:var(--muted)}
+.seg button.on{background:var(--bg);color:var(--ink)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.day{background:var(--card);border:1px solid var(--line);border-radius:var(--r);min-height:330px;padding:10px;display:flex;flex-direction:column;gap:8px;transition:background .15s ease,border-color .15s ease}
+.day.over{background:var(--accent-soft);border-color:var(--accent)}
+.day h4{font-size:12px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between}
+.day h4 b{color:var(--ink);font-size:16px}
+.day.today h4 b{color:var(--accent)}
+.post{border-radius:11px;overflow:hidden;border:1px solid var(--line);background:#fff;cursor:grab;transition:transform .16s var(--ease),box-shadow .16s ease}
+@media (hover:hover){.post:hover{box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-1px)}}
+.post:active{cursor:grabbing}
+.post .img{height:78px;background-size:cover;background-position:center}
+.post .pb{padding:7px 8px}
+.post .pt{font-size:12px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post .pm{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:11px;color:var(--muted)}
+.add{border:1.5px dashed var(--line);border-radius:11px;padding:10px;color:var(--muted);font-weight:500;font-size:12px;margin-top:auto;transition:border-color .15s ease,color .15s ease}
+@media (hover:hover){.add:hover{border-color:var(--accent);color:var(--accent)}}
+/* inbox */
+.inbox{display:grid;grid-template-columns:300px 1fr;background:var(--card);border:1px solid var(--line);border-radius:var(--r);height:560px;overflow:hidden}
+.convs{border-right:1px solid var(--line);overflow:auto}
+.conv{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.conv.on{background:var(--bg)}
+.av{width:36px;height:36px;border-radius:50%;background:#ddd;display:grid;place-items:center;font-weight:700;color:#555;flex:none}
+.conv .cn{font-weight:600;display:flex;gap:6px;align-items:center}
+.conv .cp{color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.chat{display:flex;flex-direction:column;background:#efeae2}
+.chathead{background:var(--card);padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.msgs{flex:1;padding:18px;display:flex;flex-direction:column;gap:8px;overflow:auto}
+.msg{max-width:70%;padding:8px 11px;border-radius:10px;background:#fff;font-size:13.5px;line-height:1.4;box-shadow:0 1px .5px rgba(0,0,0,.1)}
+.msg.me{align-self:flex-end;background:#d9fdd3}
+.msg small{display:block;color:var(--muted);font-size:10.5px;margin-top:3px;text-align:right}
+.botflag{font-size:10.5px;font-weight:600;color:var(--ok)}
+.composer{background:var(--card);padding:10px;display:flex;gap:8px;border-top:1px solid var(--line)}
+.composer input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit}
+.toggle{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600}
+.sw{width:36px;height:21px;border-radius:99px;background:var(--ok);position:relative;transition:background .2s ease}
+.sw::after{content:"";position:absolute;width:17px;height:17px;border-radius:50%;background:#fff;top:2px;left:17px;transition:transform .2s var(--ease)}
+.sw.off{background:#ccc}.sw.off::after{transform:translateX(-15px)}
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(20,18,15,.35);opacity:0;pointer-events:none;transition:opacity .25s ease}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(760px,100%);background:var(--card);transform:translateX(100%);transition:transform .38s var(--drawer);display:grid;grid-template-columns:1fr 300px;box-shadow:-20px 0 60px rgba(0,0,0,.12)}
+.drawer.on{transform:none}
+.dform{padding:26px;display:flex;flex-direction:column;gap:16px;overflow:auto}
+.dform label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px}
+.dform textarea,.dform input,.dform select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px;font:inherit;background:#fff}
+.dform textarea{min-height:120px;resize:vertical}
+.drop{border:1.5px dashed var(--line);border-radius:12px;padding:20px;text-align:center;color:var(--muted)}
+.picks{display:flex;gap:8px}
+.pick{flex:1;border:1.5px solid var(--line);border-radius:11px;padding:10px;display:flex;align-items:center;gap:8px;font-weight:600;transition:border-color .15s ease,background .15s ease}
+.pick.on{border-color:var(--ink);background:var(--bg)}
+.prev{background:var(--bg);padding:26px 20px;border-left:1px solid var(--line)}
+.phone{background:#fff;border-radius:16px;border:1px solid var(--line);overflow:hidden}
+.ph-h{display:flex;align-items:center;gap:8px;padding:10px;font-weight:600;font-size:13px}
+.ph-img{aspect-ratio:1;background-size:cover;background-position:center}
+.ph-t{padding:10px;font-size:12.5px;line-height:1.45;white-space:pre-wrap}
+.toast{position:fixed;bottom:24px;left:50%;background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-weight:500;transform:translate(-50%,140%);opacity:0;transition:transform .35s var(--ease),opacity .25s ease}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.hint{font-size:12px;color:var(--muted)}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}.side{display:none}
+  main{padding:18px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .cal{grid-template-columns:1fr}.day{min-height:auto}
+  .inbox{grid-template-columns:1fr}.convs{display:none}
+  .drawer{grid-template-columns:1fr}.prev{display:none}
+  .row{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">B</div>Bunker Social</div>
+    <button class="nav on" data-v="hoy">☀️ Hoy <span class="badge" id="pend">3</span></button>
+    <button class="nav" data-v="cal">📅 Calendario</button>
+    <button class="nav" data-v="wa">💬 WhatsApp <span class="badge">2</span></button>
+    <div class="sidelabel">Clientes</div>
+    <div class="client on"><div class="dot" style="background:#7a5c3e">S</div>Solace Skin Lab</div>
+    <div class="client"><div class="dot" style="background:#2f6fd6">C</div>Crédito a tu Medida</div>
+    <div class="client"><div class="dot" style="background:#e04a2f">L</div>Las Alitas</div>
+    <div class="client"><div class="dot" style="background:#3aa0e0">E</div>Empire Refrigeration</div>
+    <div class="client"><div class="dot" style="background:#e8b21c">T</div>Tlaloc SolFuturo</div>
+  </aside>
+
+  <main>
+    <!-- HOY -->
+    <section class="view on" id="v-hoy">
+      <div class="top">
+        <div><h1>Buenos días, Pako</h1><div class="sub">Domingo 25 de octubre · todo corre solo, solo revisa lo pendiente</div></div>
+        <div class="sp"></div>
+        <button class="btn pri" onclick="openDrawer()">+ Nuevo post</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>4</b><span>Publicados hoy</span></div>
+        <div class="stat"><b id="st-pend">3</b><span>Por aprobar</span></div>
+        <div class="stat"><b>62</b><span>Programados (30 días)</span></div>
+        <div class="stat"><b>18</b><span>Chats atendidos por el bot</span></div>
+      </div>
+      <div class="sec-title">Por aprobar</div>
+      <div class="list" id="approve"></div>
+      <div class="sec-title" style="margin-top:22px">Sale hoy</div>
+      <div class="list" id="today"></div>
+    </section>
+
+    <!-- CALENDARIO -->
+    <section class="view" id="v-cal">
+      <div class="top">
+        <div><h1>Calendario</h1><div class="sub">Arrastra un post a otro día para moverlo</div></div>
+        <div class="sp"></div>
+        <button class="btn sec" onclick="toast('Sube un ZIP o CSV con 30 posts y se programan solos')">⬆ Subir lote</button>
+        <button class="btn pri" onclick="openDrawer()">+ Nuevo post</button>
+      </div>
+      <div class="weekbar">
+        <div class="seg"><button class="on">Semana</button><button onclick="toast('Vista mes: próximamente en el prototipo')">Mes</button></div>
+        <span class="hint">26 oct – 1 nov 2026 · Solace Skin Lab</span>
+      </div>
+      <div class="cal" id="cal"></div>
+    </section>
+
+    <!-- WHATSAPP -->
+    <section class="view" id="v-wa">
+      <div class="top">
+        <div><h1>WhatsApp</h1><div class="sub">El bot contesta solo; tú entras cuando te necesita</div></div>
+      </div>
+      <div class="inbox">
+        <div class="convs" id="convs"></div>
+        <div class="chat">
+          <div class="chathead">
+            <div class="av" id="ch-av">M</div>
+            <div><b id="ch-name">María López</b><div class="hint" id="ch-brand">Crédito a tu Medida</div></div>
+            <div class="sp"></div>
+            <div class="toggle">Bot <div class="sw" id="botsw" onclick="toggleBot()"></div></div>
+          </div>
+          <div class="msgs" id="msgs"></div>
+          <div class="composer">
+            <input id="reply" placeholder="Escribe para tomar la conversación…" onkeydown="if(event.key==='Enter')send()">
+            <button class="btn acc" onclick="send()">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- drawer nuevo post -->
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="dform">
+    <div style="display:flex;align-items:center"><h1 style="font-size:19px">Nuevo post</h1><div class="sp"></div><button class="mini no" onclick="closeDrawer()">✕</button></div>
+    <div><label>Dónde</label>
+      <div class="picks">
+        <button class="pick on" onclick="this.classList.toggle('on')"><span class="n fb">f</span>Facebook</button>
+        <button class="pick on" onclick="this.classList.toggle('on')"><span class="n ig">ig</span>Instagram</button>
+      </div></div>
+    <div><label>Imagen o video</label><div class="drop">Arrastra aquí o <b style="color:var(--accent)">elige archivo</b></div></div>
+    <div><label>Texto</label><textarea id="txt" oninput="upd()">Glow season is here ✨
+Luxury product $74.99 + a FREE facial — any day.
+Book now: (915) 209-2060</textarea></div>
+    <div style="display:flex;gap:10px">
+      <div style="flex:1"><label>Día</label><input type="date" value="2026-10-28"></div>
+      <div style="flex:1"><label>Hora</label><input type="time" value="10:00"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:auto">
+      <button class="btn sec" style="flex:1" onclick="closeDrawer();toast('Guardado como borrador')">Borrador</button>
+      <button class="btn pri" style="flex:2" onclick="closeDrawer();toast('✓ Programado: mié 28 oct, 10:00 am')">Programar</button>
+    </div>
+  </div>
+  <div class="prev">
+    <label class="hint" style="display:block;margin-bottom:10px;font-weight:600">Vista previa · Instagram</label>
+    <div class="phone">
+      <div class="ph-h"><div class="dot" style="background:#7a5c3e">S</div>solaceskinlab</div>
+      <div class="ph-img" style="background-image:url(https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=70)"></div>
+      <div class="ph-t" id="pv"></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const IMG=[
+ 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&q=60',
+ 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=400&q=60',
+ 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=400&q=60',
+ 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=60',
+ 'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400&q=60',
+ 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&q=60'];
+const $=s=>document.querySelector(s);
+const nets='<span class="net"><span class="n fb">f</span><span class="n ig">ig</span></span>';
+
+// HOY
+const pend=[
+ {c:'Solace Skin Lab',t:'Tuesday Glow: 2 free facials + wine',h:'Mar 27 · 6:00 pm',i:0},
+ {c:'Las Alitas',t:'Combo Boneless Lunes 2x1',h:'Lun 26 · 12:30 pm',i:5},
+ {c:'Empire Refrigeration',t:'Is your AC ready for winter?',h:'Lun 26 · 9:00 am',i:4}];
+const today=[
+ {c:'Solace Skin Lab',t:'Salmon DNA: glow from within',h:'10:00 am',s:'ok',l:'Publicado'},
+ {c:'Crédito a tu Medida',t:'Jubilados IMSS: tu crédito en 48h',h:'11:00 am',s:'ok',l:'Publicado'},
+ {c:'Tlaloc SolFuturo',t:'Paneles sin inversión para tu negocio',h:'5:00 pm',s:'sched',l:'5:00 pm'}];
+function renderHoy(){
+ $('#approve').innerHTML=pend.map((p,k)=>`<div class="row" id="ap${k}"><div class="thumb" style="background-image:url(${IMG[p.i]})"></div>
+ <div><div class="t">${p.t}</div><div class="m">${p.c} · ${p.h} · ${nets}</div></div>
+ <div class="acts"><button class="mini no" onclick="openDrawer()">Editar</button><button class="mini yes" onclick="approve(${k})">Aprobar</button></div></div>`).join('');
+ $('#today').innerHTML=today.map((p,k)=>`<div class="row"><div class="thumb" style="background-image:url(${IMG[(k+1)%6]})"></div>
+ <div><div class="t">${p.t}</div><div class="m">${p.c} · ${nets}</div></div><div class="acts"><span class="chip ${p.s}">${p.s==='ok'?'✓ ':''}${p.l}</span></div></div>`).join('');
+}
+let left=3;
+function approve(k){const r=$('#ap'+k);r.classList.add('gone');setTimeout(()=>r.remove(),220);left--;$('#st-pend').textContent=left;$('#pend').textContent=left;if(!left)$('#pend').style.display='none';toast('✓ Aprobado y programado');}
+
+// CALENDARIO
+const days=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+let posts=[
+ {d:0,t:'Salmon DNA facial: real glow',h:'10:00',st:'sched'},
+ {d:1,t:'Tuesday: 2 FREE facials + wine 🍷',h:'18:00',st:'wait'},
+ {d:2,t:'Microneedling for men',h:'10:00',st:'sched'},
+ {d:3,t:'Luxury product $74.99 + FREE facial',h:'12:00',st:'sched'},
+ {d:4,t:'Weekend glow prep',h:'10:00',st:'sched'},
+ {d:4,t:'Client story: Ana',h:'17:00',st:'wait'},
+ {d:6,t:'Sunday self-care ritual',h:'11:00',st:'sched'}];
+function renderCal(){
+ $('#cal').innerHTML=days.map((d,i)=>`<div class="day ${i===0?'':''}" data-d="${i}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="drop(event,${i})">
+ <h4>${d}<b>${26+i>31?26+i-31:26+i}</b></h4>
+ ${posts.map((p,k)=>p.d===i?`<div class="post" draggable="true" ondragstart="event.dataTransfer.setData('k',${k})" onclick="openDrawer()">
+   <div class="img" style="background-image:url(${IMG[k%6]})"></div>
+   <div class="pb"><div class="pt">${p.t}</div><div class="pm">${p.h} ${nets} <span class="chip ${p.st}" style="margin-left:auto">${p.st==='wait'?'Aprobar':'Listo'}</span></div></div></div>`:'').join('')}
+ <button class="add" onclick="openDrawer()">+ Agregar</button></div>`).join('');
+}
+function drop(e,i){e.preventDefault();const k=+e.dataTransfer.getData('k');posts[k].d=i;renderCal();toast('Movido al '+days[i]+' · se reprogramó solo');}
+
+// WHATSAPP
+const convs=[
+ {n:'María López',b:'Crédito a tu Medida',p:'¿Qué necesito para el crédito?',bot:true,m:[
+  ['Hola, soy jubilada del IMSS, ¿qué necesito para el crédito?',0,'9:12'],
+  ['¡Hola María! 😊 Para jubilados IMSS solo necesitas: INE, último talón de pago y comprobante de domicilio. ¿Te agendo una cita en nuestra oficina de Zona Pronaf?',1,'9:12'],
+  ['Sí, ¿el martes en la mañana?',0,'9:14'],
+  ['Listo ✅ Martes 27 a las 10:00 am en Benjamín Franklin 3220 Int-D. Te mando ubicación.',1,'9:14']]},
+ {n:'Jessica R.',b:'Solace Skin Lab',p:'🎤 Audio · transcrito',bot:false,need:true,m:[
+  ['🎤 (audio transcrito) "Hi, I want to know if the Tuesday promo applies if I bring my sister"',0,'8:40'],
+  ['Yes! Tuesday promo includes a FREE facial for you and a friend + wine 🍷. Want me to book you?',1,'8:40'],
+  ['Can I pay with Afterpay?',0,'8:45'],
+  ['⚠️ El bot no sabe esto → te avisó por Telegram',2,'8:45']]},
+ {n:'Carlos M.',b:'Las Alitas',p:'¿Tienen servicio a domicilio?',bot:true,m:[
+  ['¿Tienen servicio a domicilio?',0,'Ayer'],['¡Sí! 🍗 Por DiDi y Uber Eats, o recoge en sucursal. ¿Te paso el menú?',1,'Ayer']]}];
+let cur=0;
+function renderConvs(){
+ $('#convs').innerHTML=convs.map((c,k)=>`<div class="conv ${k===cur?'on':''}" onclick="openConv(${k})"><div class="av">${c.n[0]}</div>
+ <div><div class="cn">${c.n} ${c.need?'<span class="chip wait">Te necesita</span>':''}</div><div class="hint">${c.b}</div><div class="cp">${c.p}</div></div></div>`).join('');
+}
+function openConv(k){cur=k;const c=convs[k];$('#ch-av').textContent=c.n[0];$('#ch-name').textContent=c.n;$('#ch-brand').textContent=c.b;
+ $('#botsw').classList.toggle('off',!c.bot);
+ $('#msgs').innerHTML=c.m.map(([t,me,h])=>me===2?`<div class="chip wait" style="align-self:center">${t}</div>`:`<div class="msg ${me?'me':''}">${t}<small>${me?'<span class="botflag">🤖 Bot · </span>':''}${h}</small></div>`).join('');
+ renderConvs();}
+function toggleBot(){const c=convs[cur];c.bot=!c.bot;$('#botsw').classList.toggle('off',!c.bot);toast(c.bot?'🤖 El bot vuelve a contestar':'🙋 Tú tomas la conversación');}
+function send(){const v=$('#reply').value.trim();if(!v)return;const c=convs[cur];c.m.push([v,1,'ahora']);c.bot=false;c.need=false;$('#reply').value='';openConv(cur);$('#msgs').lastElementChild.querySelector('.botflag')?.remove();toast('Enviado · bot en pausa en este chat');}
+
+// común
+document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));$('#v-'+b.dataset.v).classList.add('on');});
+function openDrawer(){$('#drawer').classList.add('on');$('#scrim').classList.add('on');upd();}
+function closeDrawer(){$('#drawer').classList.remove('on');$('#scrim').classList.remove('on');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+function upd(){$('#pv').textContent=$('#txt').value;}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200);}
+renderHoy();renderCal();renderConvs();openConv(0);
+</script>
+</body>
+</html>
