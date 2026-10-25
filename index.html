@@ -144,7 +144,8 @@ h1{font-size:22px;font-weight:700;letter-spacing:-.02em}
     <button class="nav" data-v="cal">📅 Calendario</button>
     <button class="nav" data-v="wa">💬 WhatsApp <span class="badge">2</span></button>
     <div class="sidelabel">Clientes</div>
-    <div class="client on"><div class="dot" style="background:#7a5c3e">S</div>Solace Skin Lab</div>
+    <div class="client on"><div class="dot" style="background:#1c1b19">✦</div>Todos</div>
+    <div class="client"><div class="dot" style="background:#7a5c3e">S</div>Solace Skin Lab</div>
     <div class="client"><div class="dot" style="background:#2f6fd6">C</div>Crédito a tu Medida</div>
     <div class="client"><div class="dot" style="background:#e04a2f">L</div>Las Alitas</div>
     <div class="client"><div class="dot" style="background:#3aa0e0">E</div>Empire Refrigeration</div>
@@ -160,7 +161,7 @@ h1{font-size:22px;font-weight:700;letter-spacing:-.02em}
         <button class="btn pri" onclick="openDrawer()">+ Nuevo post</button>
       </div>
       <div class="stats">
-        <div class="stat"><b>4</b><span>Publicados hoy</span></div>
+        <div class="stat"><b>2</b><span>Publicados hoy</span></div>
         <div class="stat"><b id="st-pend">3</b><span>Por aprobar</span></div>
         <div class="stat"><b>62</b><span>Programados (30 días)</span></div>
         <div class="stat"><b>18</b><span>Chats atendidos por el bot</span></div>
@@ -253,23 +254,24 @@ const IMG=[
  'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=60',
  'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400&q=60',
  'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&q=60'];
+const CI={wings:'https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400&q=60',ac:'https://images.unsplash.com/photo-1631545806609-35d4ae440431?w=400&q=60',cred:'https://images.unsplash.com/photo-1516307365426-bea591f05011?w=400&q=60',solar:'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&q=60'};
 const $=s=>document.querySelector(s);
 const nets='<span class="net"><span class="n fb">f</span><span class="n ig">ig</span></span>';
 
 // HOY
 const pend=[
- {c:'Solace Skin Lab',t:'Tuesday Glow: 2 free facials + wine',h:'Mar 27 · 6:00 pm',i:0},
- {c:'Las Alitas',t:'Combo Boneless Lunes 2x1',h:'Lun 26 · 12:30 pm',i:5},
- {c:'Empire Refrigeration',t:'Is your AC ready for winter?',h:'Lun 26 · 9:00 am',i:4}];
+ {c:'Empire Refrigeration',t:'Is your AC ready for winter?',h:'Lun 26 · 9:00 am',img:CI.ac},
+ {c:'Las Alitas',t:'Combo Boneless Lunes 2x1',h:'Lun 26 · 12:30 pm',img:CI.wings},
+ {c:'Solace Skin Lab',t:'Tuesday Glow: 2 free facials + wine',h:'Martes 27 · 6:00 pm',img:IMG[0]}];
 const today=[
- {c:'Solace Skin Lab',t:'Salmon DNA: glow from within',h:'10:00 am',s:'ok',l:'Publicado'},
- {c:'Crédito a tu Medida',t:'Jubilados IMSS: tu crédito en 48h',h:'11:00 am',s:'ok',l:'Publicado'},
- {c:'Tlaloc SolFuturo',t:'Paneles sin inversión para tu negocio',h:'5:00 pm',s:'sched',l:'5:00 pm'}];
+ {c:'Solace Skin Lab',t:'Salmon DNA: glow from within',h:'10:00 am',s:'ok',l:'Publicado 10:00 am',img:IMG[1]},
+ {c:'Crédito a tu Medida',t:'Jubilados IMSS: tu crédito en 48h',h:'11:00 am',s:'ok',l:'Publicado 11:00 am',img:CI.cred},
+ {c:'Tlaloc SolFuturo',t:'Paneles sin inversión para tu negocio',h:'5:00 pm',s:'sched',l:'Sale 5:00 pm',img:CI.solar}];
 function renderHoy(){
- $('#approve').innerHTML=pend.map((p,k)=>`<div class="row" id="ap${k}"><div class="thumb" style="background-image:url(${IMG[p.i]})"></div>
+ $('#approve').innerHTML=pend.map((p,k)=>`<div class="row" id="ap${k}"><div class="thumb" style="background-image:url(${p.img})"></div>
  <div><div class="t">${p.t}</div><div class="m">${p.c} · ${p.h} · ${nets}</div></div>
  <div class="acts"><button class="mini no" onclick="openDrawer()">Editar</button><button class="mini yes" onclick="approve(${k})">Aprobar</button></div></div>`).join('');
- $('#today').innerHTML=today.map((p,k)=>`<div class="row"><div class="thumb" style="background-image:url(${IMG[(k+1)%6]})"></div>
+ $('#today').innerHTML=today.map((p,k)=>`<div class="row"><div class="thumb" style="background-image:url(${p.img})"></div>
  <div><div class="t">${p.t}</div><div class="m">${p.c} · ${nets}</div></div><div class="acts"><span class="chip ${p.s}">${p.s==='ok'?'✓ ':''}${p.l}</span></div></div>`).join('');
 }
 let left=3;
